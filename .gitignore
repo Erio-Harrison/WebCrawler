@@ -1,0 +1,52 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CLion folders
+cmake-build-*/
+
+# CLion specific
+.idea/
+
+# VS Code specific
+.vscode/
+
+# Build/output directory
+build/
+install/
+
+# Python files
+*.pyc
+__pycache__/
+
+# Swap files
+*.swp
+
+# Logs
+log/
