@@ -78,7 +78,7 @@ void writeLine(SOCKETTYPE sock, const std::string& txt) {
         //send function returns an integer value,
         //and iSendResult is used to capture this value.
         int iSendResult = send(sock, buffer, length, 0);
-        if (iSendResult == -1) {
+        if (iSendResult == SOCKET_ERROR) {
             printLastError("send failed with error");
             CLOSESOCKET(sock);
             #if defined(_WIN32) || defined(_WIN64)
@@ -195,7 +195,7 @@ size_t getFileSize(const std::string& selector, const std::string& host, int por
     int bytesReceived;
     const size_t maxDataLimit = 5 * 1024 * 1024;  // Limit to 5 MB to prevent firehose data overflow
     auto startTime = std::chrono::high_resolution_clock::now();
-    const int timeoutSeconds = 10;  // 10 seconds timeout
+    const int timeoutSeconds = 5;  // 5 seconds timeout
 
     while ((bytesReceived = recv(sock, buffer, sizeof(buffer), 0)) > 0) {
         fileSize += bytesReceived;
