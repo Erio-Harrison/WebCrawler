@@ -147,7 +147,7 @@ SOCKETTYPE connectToServer(const char* host, const char* portStr) {
     // Resolve the server address and port
     int iResult = getaddrinfo(host, portStr, &hints, &result);
     if (iResult != 0) {
-        std::cerr << "getaddrinfo failed: " << gai_strerror(iResult) << std::endl;
+        std::cerr << "getaddrinfo failed " << gai_strerror(iResult) << std::endl;
         return INVALID_SOCKET;
     }
 
@@ -274,7 +274,11 @@ void processGopherLine(const std::string& line, const std::string& currentHost, 
     }
 
     std::string fullPath = host + ":" + portStr + selector;
-
+    if (itemType == '3') {  // Handle error items
+        uniqueInvalidRefs.insert(fullPath);
+        std::cerr << "Error item encountered at: " << fullPath << " - " << description << std::endl;
+        return;  // Do not proceed with size fetching for error items
+    }
     if (host == currentHost && port == currentPort) {
         if (selector == "/misc/godot") {
             std::cerr << "Skipping known problematic endpoint: " << fullPath << std::endl;
@@ -283,8 +287,7 @@ void processGopherLine(const std::string& line, const std::string& currentHost, 
         size_t fileSize = getFileSize(selector, host, port);
         if (fileSize == static_cast<size_t>(-1)) {
             // Handle errors specifically, perhaps log them or store as an invalid reference.
-            uniqueInvalidRefs.insert(fullPath);
-            return; // Don't store these file sizes.
+            return; // Don't store these file sizes and return.
         }
 
         switch (itemType) {
@@ -320,7 +323,6 @@ void crawlGopherDirectory(SOCKETTYPE sock, const std::string& selector) {
     // Basic example of reading a line from the server
     std::string line = readLine(sock);
     while (!line.empty()) {
-        std::cout << "Received: " << line << std::endl;
         // Process the line
         processGopherLine(line,serviceHost,servicePort);
         // Read the next line
@@ -413,7 +415,7 @@ std::string readFileContent(const std::string& fullPath) {
     // Clean up
     CLOSESOCKET(sock);
     #if defined(_WIN32) || defined(_WIN64)
-            WSACleanup();
+        WSACleanup();
     #endif
 
     return content;
